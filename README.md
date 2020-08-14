@@ -1,25 +1,14 @@
-# Hugo-ESP8266
+# Hugo-ESP8266-Plus
 
 Hugo is a 4-button ESP8266 Wi-Fi Remote, Arduino compatible and simple to use.
+This ```plus``` custom firmware aims to create an alternative firmware that simply sends out a broadcast UDP packet that requires very little setup from the device it's self.
 
 ![alt text](https://raw.githubusercontent.com/mcer12/Hugo-ESP8266/master/Images/hugo_numbered.png)
 
-## UPDATES
+## Error messages
+Sometimes problems happen.. When this occurs the board will flash x amount of times fast, wait for a second and then do it again. Below is what the amount of fast flashes means.
+* ```5 flashes``` - A file system error has occured.
 
-**RELEASE 1.4.1 bugfix (16/11/2019)**
-- Fixes an issue with input values not being saved in config portal 
-
-**RELEASE 1.4 (3/11/2019)**
-- All sketches: Config AP name change
-- MQTT Sketch: Battery is now automatically registered in Home Assistant  
-- HTTP Sketch: Added support for HTTPS, binary size optimizations  
-
-**RELEASE 1.3 MQTT (24/8/2019)**:  
-- Major MQTT firmware update, it's now fully compatible with home assistant incl. auto discovery  
-  
-**RELEASE 1.3 (14/7/2019)**:  
-- Button combinations added, that means 3 additional "virtual" buttons to use.  
-- MQTT firmware added
 
 ## Useful links
 3D printable case available here:  

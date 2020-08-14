@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hugo Plus Configuration</title>
+
+        <style>
+            html {
+                background-color: black;
+                color: white;
+            }
+            section {
+                margin-bottom: 5vh;
+            }
+        </style>
+    </head>
+    <body>
+        <center>
+            <h1>Hugo Plus Configuration</h1>
+            <form method="post" action="./save.html">
+                <section>
+                    <h2>Wifi</h2>
+                    <label for="ssid">SSID</label></br><input type="text" id="ssid" name="ssid" value=""></br>
+                    <label for="wifiPass">Password</label></br><input type="password" id="wifiPass" name="wifiPass" value=""></br>
+                </section>
+                <section>
+                    <h2>Static IP</h2>
+                    <label for="staticIP">IP Address</label></br><input type="text" id="staticIP" name="staticIP" value=""></br>
+                    <label for="staticGateway">Gateway</label></br><input type="text" id="staticGateway" name="staticGateway" value=""></br>
+                    <label for="staticSubnet">Subnet</label></br><input type="text" id="staticSubnet" name="staticSubnet" value=""></br>
+                </section>
+                <section>
+                    <h2>UDP</h2>
+                    <label for="outPort">Outgoing Port</label></br><input type="number" id="outPort" name="outPort" value=""></br>
+                </section>
+                <button type="submit">Save settings</button>
+            </form>
+        </center>
+    </body>
+</html>
