@@ -41,6 +41,7 @@ bool readConfig() {
         json["wifiPass"] = "";
 
         json["outPort"] = DEFAULT_UDP_PORT;
+        json["deviceName"] = "Hugo_" + macLastThreeSegments(mac);
         
         json["staticIP"] = "";
         json["staticGateway"] = "";
@@ -52,9 +53,4 @@ bool readConfig() {
     DeserializationError error = deserializeJson(json, file.readString());
     file.close();
     return error == DeserializationError::Ok;
-}
-
-//Returns a string value
-const char* readStringValueFromMemory(String key) {
-    return json["key"].as<const char*>();
 }

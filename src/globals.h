@@ -16,17 +16,31 @@ const int buttonPins[TOTAL_BUTTONS] =  {14, 4, 12, 13};
 #define STATUS_LED 5
 #define OTA_PIN 16
 #define HELD_BUTTON_DELAY 500
+#define BATTERY_PIN A0
 
 #define AP_SSID "HugoConfig_" + macLastThreeSegments(mac)
 #define DEFAULT_UDP_PORT 4922
 
+#define WIFI_CONNECTION_ERROR 3
+#define WIFI_CONNECTION_ERROR_INVALID_STATIC 8
 #define FILE_SYSTEM_ERROR_FLASHES 5
+
+bool buttonStates[TOTAL_BUTTONS];
+bool buttonWasHeld = false;
 
 enum DeviceMode {
     Boot,
     NormalOperation,
     Configuration
 };
+
+//Goto sleep
+void sleep() {
+    yield();
+    delay(5);
+    ESP.deepSleep(0);
+    yield();
+}
 
 //Flash the led for a critical error. This is blocking and will reset the processor after flashing
 void critialErrorFlasherBlocking(int flashes) {
@@ -43,7 +57,7 @@ void critialErrorFlasherBlocking(int flashes) {
         delay(2000);
     }
 
-    ESP.restart();
+    sleep();
 }
 
 String macLastThreeSegments(const uint8_t* mac) {
@@ -54,6 +68,11 @@ String macLastThreeSegments(const uint8_t* mac) {
   }
   result.toUpperCase();
   return result;
+}
+
+//Was a button pressed when we woke up?
+bool wasButtonPressed(int button) {
+    return buttonStates[button];
 }
 
 //Is a button pressed?
@@ -67,7 +86,23 @@ bool isButtonHeld(int button) {
     return isButtonPressed(button);
 }
 
-//Goto sleep
-void sleep() {
-    ESP.deepSleep(0);
+//Return the battery level in %. 255% means charging
+float batteryLevel() {
+    int levelRaw = 0;
+    for(int i = 0; i < 10; i++){
+        levelRaw += analogRead(BATTERY_PIN);
+        delay(10);
+    }
+    levelRaw = levelRaw / 10;
+
+    //Charging
+    if(levelRaw > 1000){return 255.0;}
+    if(levelRaw > 868){
+        return ((1000 - 868) / 132) * 100.0;
+    }
+    else {return 0.0;}
+}
+
+String friendlyBatteryLevel() {
+    return batteryLevel() == 255.0 ? "Charging" : (String)batteryLevel() + "%";
 }
