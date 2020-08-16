@@ -34,6 +34,11 @@ void decideAction() {
     msg["frendlyBatteryLevel"] = friendlyBatteryLevel();
     msg["timeTaken"] = millis() - startTime;
 
+    for(int i = 0; i < TOTAL_BUTTONS; i++) {
+        msg["buttons"][i] = wasButtonPressed(i);
+    }
+
+    msg["buttonsWereHeld"] = buttonWasHeld;
 
     sendOut(msg);
 }

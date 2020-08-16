@@ -17,6 +17,7 @@ const int buttonPins[TOTAL_BUTTONS] =  {14, 4, 12, 13};
 #define OTA_PIN 16
 #define HELD_BUTTON_DELAY 500
 #define BATTERY_PIN A0
+#define TIME_TO_SLEEP 20000
 
 #define AP_SSID "HugoConfig_" + macLastThreeSegments(mac)
 #define DEFAULT_UDP_PORT 4922

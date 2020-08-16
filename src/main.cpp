@@ -99,8 +99,6 @@ void setup() {
       //Attempt to connect
       if(json["configUtilityWasOpened"].as<bool>()) {
           Serial.println("Reset wifi settings");
-          json["configUtilityWasOpened"] = false;
-          saveConfig();
           //If the wifi configuration was changed update it
           WiFi.mode(WIFI_STA);
           const char* staticIP = json["staticIP"].as<const char*>();
@@ -111,24 +109,24 @@ void setup() {
             IPAddress ipAddress, gateway, subnet;
             if(ipAddress.fromString(staticIP) && gateway.fromString(staticGateway) && subnet.fromString(staticSubnet)) {
               Serial.print("Setting static ip to IP: ");Serial.print(ipAddress);Serial.print(" Gateway: ");Serial.print(gateway);Serial.print(" Subnet: ");Serial.println(subnet);
-              WiFi.config(ipAddress, gateway, subnet);
+              if(!WiFi.config(ipAddress, gateway, subnet)) {Serial.println("Failed to set static ip");}
             }
             else {
               Serial.println("Invalid static ip");
               critialErrorFlasherBlocking(WIFI_CONNECTION_ERROR_INVALID_STATIC);
             }
           }
+
+          json["configUtilityWasOpened"] = false;
+          saveConfig();
+          WiFi.begin(ssid, pass);
+          WiFi.persistent(true);
+          WiFi.setAutoConnect(true);
+          WiFi.setAutoReconnect(true);
       }
 
       //Ok attempt to connect
-      Serial.print("Attempting to connect to " + (String)ssid);
-      if(json["configUtilityWasOpened"].as<bool>()) {
-        WiFi.begin(ssid, pass);
-        WiFi.persistent(true);
-        WiFi.setAutoConnect(true);
-        WiFi.setAutoReconnect(true);
-      }
-
+      Serial.println("Attempting to connect to " + (String)ssid);
       if(WiFi.waitForConnectResult() == WL_CONNECTED) {
         Serial.print(" Connected! IP: ");
         Serial.print(WiFi.localIP());
@@ -170,9 +168,32 @@ void setup() {
   digitalWrite(STATUS_LED, HIGH);
   delay(buttonWasHeld ? 1000 : 100);
   digitalWrite(STATUS_LED, LOW);
-
-  sleep();
 }
 
+//Stay awake for a little while to see if the user clicks any more buttons
+unsigned long sleepTime = millis() + TIME_TO_SLEEP;
 void loop() {
+  bool aButtonWasClicked = false;
+  startTime = millis();
+  
+  readButtons();
+  buttonWasHeld = isAButtonHeld(); 
+
+  for(int i = 0; i < TOTAL_BUTTONS; i++) {
+    if(buttonStates[i]){aButtonWasClicked = true; break;}
+  }
+
+  //If a button was clicked send it and wait a little longer before sleeping
+  if(aButtonWasClicked) {
+    sleepTime = millis() + TIME_TO_SLEEP;
+    decideAction();
+    Serial.print("Button(s) ");
+    for(int i = 0; i < TOTAL_BUTTONS; i++) {
+      Serial.print((String)i + ",");
+    }
+    if(buttonWasHeld){Serial.println("were held");}else{Serial.println("were clicked");}
+  }
+
+  //Go back to sleep
+  if(sleepTime < millis()){sleep();}
 }
