@@ -122,13 +122,14 @@ void setup() {
 
       //Ok attempt to connect
       Serial.print("Attempting to connect to " + (String)ssid);
-      if(json["configUtilityWasOpened"].as<bool>()) {WiFi.begin(ssid, pass); WiFi.persistent(true);}
-      unsigned long timeout = millis() + 10000;
-      while(timeout > millis() && WiFi.status() != WL_CONNECTED) {
-        Serial.print(".");
-        delay(1000);
+      if(json["configUtilityWasOpened"].as<bool>()) {
+        WiFi.begin(ssid, pass);
+        WiFi.persistent(true);
+        WiFi.setAutoConnect(true);
+        WiFi.setAutoReconnect(true);
       }
-      if(WiFi.status() == WL_CONNECTED) {
+
+      if(WiFi.waitForConnectResult() == WL_CONNECTED) {
         Serial.print(" Connected! IP: ");
         Serial.print(WiFi.localIP());
         Serial.print(" MAC: ");
