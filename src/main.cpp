@@ -50,7 +50,6 @@ void setup() {
   pinMode(OTA_PIN, OUTPUT);
   digitalWrite(OTA_PIN, LOW);
   pinMode(STATUS_LED, OUTPUT);
-  digitalWrite(STATUS_LED, HIGH);
 
   //Read the button states as fast as possible when we wake up
   readButtons();
@@ -175,7 +174,7 @@ unsigned long sleepTime = millis() + TIME_TO_SLEEP;
 void loop() {
   bool aButtonWasClicked = false;
   startTime = millis();
-  
+
   readButtons();
   buttonWasHeld = isAButtonHeld(); 
 
@@ -192,6 +191,12 @@ void loop() {
       Serial.print((String)i + ",");
     }
     if(buttonWasHeld){Serial.println("were held");}else{Serial.println("were clicked");}
+
+    digitalWrite(STATUS_LED, LOW);
+    delay(buttonWasHeld ? 1000 : 100);
+    digitalWrite(STATUS_LED, HIGH);
+    delay(buttonWasHeld ? 1000 : 100);
+    digitalWrite(STATUS_LED, LOW);
   }
 
   //Go back to sleep
